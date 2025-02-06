@@ -13,6 +13,7 @@ class Medicamento:
         self.desconto_percentual = 0.0
         self.preco_desconto = 0.0
         self.valor_total = 0.0
+        self.tem_desconto_especial = False
 
 class OrcamentoApp:
     def __init__(self, root):
@@ -20,22 +21,18 @@ class OrcamentoApp:
         self.root.title("Processador de Orçamento de Medicamentos")
         self.root.geometry("800x600")
 
-        # Frame para os botões no topo
         self.button_frame = tk.Frame(root)
         self.button_frame.pack(pady=5, fill=tk.X)
 
-        # Área de entrada
         self.label_entrada = tk.Label(root, text="Cole aqui os dados do carrinho:")
         self.label_entrada.pack(pady=5)
 
         self.entrada_text = scrolledtext.ScrolledText(root, height=15, width=80)
         self.entrada_text.pack(pady=10)
 
-        # Frame para os botões principais
         self.main_buttons_frame = tk.Frame(root)
         self.main_buttons_frame.pack(pady=5)
 
-        # Botões
         self.limpar_btn = tk.Button(self.main_buttons_frame, text="Limpar Tudo", command=self.limpar_tudo)
         self.limpar_btn.pack(side=tk.LEFT, padx=5)
 
@@ -45,14 +42,11 @@ class OrcamentoApp:
         self.copiar_btn = tk.Button(self.main_buttons_frame, text="Copiar Orçamento", command=self.copiar_orcamento)
         self.copiar_btn.pack(side=tk.LEFT, padx=5)
 
-        # Área de resultado
         self.resultado_text = scrolledtext.ScrolledText(root, height=20, width=80, state='disabled')
         self.resultado_text.pack(pady=10)
 
     def limpar_tudo(self):
-        # Limpa área de entrada
         self.entrada_text.delete('1.0', tk.END)
-        # Limpa área de resultado
         self.resultado_text.config(state='normal')
         self.resultado_text.delete('1.0', tk.END)
         self.resultado_text.config(state='disabled')
@@ -63,7 +57,6 @@ class OrcamentoApp:
             messagebox.showwarning("Aviso", "Não há orçamento para copiar!")
             return
 
-        # Copia para a área de transferência
         self.root.clipboard_clear()
         self.root.clipboard_append(conteudo)
         messagebox.showinfo("Sucesso", "Orçamento copiado para a área de transferência!")
@@ -117,7 +110,8 @@ class OrcamentoApp:
                     med.desconto_percentual = float(precos[1].replace(',', '.'))
                     
                     med.preco_desconto = float(linhas[3].replace(',', '.'))
-                    med.valor_total = float(linhas[4].replace(',', '.'))
+                    med.valor_total = float(linhas[4].split()[0].replace(',', '.'))
+                    med.tem_desconto_especial = len(linhas[4].split()) > 1 and 'desconto' in linhas[4].lower()
                     
                     medicamentos.append(med)
                     
@@ -139,7 +133,10 @@ class OrcamentoApp:
             relatorio += f"Medicamento: {med.nome}\n"
             relatorio += f"Quantidade: {med.quantidade}\n"
             relatorio += f"Preço Unitário: R$ {med.preco_cheio:.2f}\n"
-            relatorio += f"Preço com Desconto: R$ {med.preco_desconto:.2f}\n"
+
+            if med.desconto_percentual > 0:
+                relatorio += f"Preço com Desconto: R$ {med.preco_desconto:.2f}\n"
+                
             relatorio += f"Valor Total: R$ {med.valor_total:.2f}\n"
             
             economia = (med.preco_cheio - med.preco_desconto) * med.quantidade
