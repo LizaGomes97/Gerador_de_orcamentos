@@ -1,9 +1,6 @@
 import re
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
-import win32print
-import win32gui
-import win32con
 import tempfile
 import os
 
@@ -45,8 +42,8 @@ class OrcamentoApp:
         self.processar_btn = tk.Button(self.main_buttons_frame, text="Processar Orçamento", command=self.processar_orcamento)
         self.processar_btn.pack(side=tk.LEFT, padx=5)
 
-        self.imprimir_btn = tk.Button(self.main_buttons_frame, text="Imprimir", command=self.imprimir_orcamento)
-        self.imprimir_btn.pack(side=tk.LEFT, padx=5)
+        self.copiar_btn = tk.Button(self.main_buttons_frame, text="Copiar Orçamento", command=self.copiar_orcamento)
+        self.copiar_btn.pack(side=tk.LEFT, padx=5)
 
         # Área de resultado
         self.resultado_text = scrolledtext.ScrolledText(root, height=20, width=80, state='disabled')
@@ -60,49 +57,16 @@ class OrcamentoApp:
         self.resultado_text.delete('1.0', tk.END)
         self.resultado_text.config(state='disabled')
 
-    def imprimir_orcamento(self):
-        if not self.resultado_text.get('1.0', tk.END).strip():
-            messagebox.showwarning("Aviso", "Não há orçamento para imprimir!")
+    def copiar_orcamento(self):
+        conteudo = self.resultado_text.get('1.0', tk.END).strip()
+        if not conteudo:
+            messagebox.showwarning("Aviso", "Não há orçamento para copiar!")
             return
 
-        try:
-            # Criar arquivo temporário com o conteúdo
-            temp_file = tempfile.NamedTemporaryFile(delete=False, mode='w', suffix='.txt')
-            temp_file.write(self.resultado_text.get('1.0', tk.END))
-            temp_file.close()
-
-            # Imprimir o arquivo
-            printer_name = win32print.GetDefaultPrinter()
-
-            # Configurar o documento para impressão
-            hprinter = win32print.OpenPrinter(printer_name)
-            printer_info = win32print.GetPrinter(hprinter, 2)
-            pdc = win32print.DOCINFO()
-            pdc.pDocName = "Orçamento de Medicamentos"
-            pdc.pOutputFile = None
-            pdc.pDatatype = "RAW"
-
-            # Iniciar impressão
-            hdc = win32print.StartDocPrinter(hprinter, 1, pdc)
-            win32print.StartPagePrinter(hprinter)
-
-            # Abrir o arquivo e enviar para a impressora
-            with open(temp_file.name, "rb") as f:
-                data = f.read()
-                win32print.WritePrinter(hprinter, data)
-
-            # Finalizar impressão
-            win32print.EndPagePrinter(hprinter)
-            win32print.EndDocPrinter(hprinter)
-            win32print.ClosePrinter(hprinter)
-
-
-            # Aguardar um pouco antes de deletar o arquivo
-            self.root.after(5000, lambda: os.unlink(temp_file.name))
-            
-            messagebox.showinfo("Sucesso", "Orçamento enviado para impressão!")
-        except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao imprimir: {str(e)}")
+        # Copia para a área de transferência
+        self.root.clipboard_clear()
+        self.root.clipboard_append(conteudo)
+        messagebox.showinfo("Sucesso", "Orçamento copiado para a área de transferência!")
 
     def processar_orcamento(self):
         self.resultado_text.config(state='normal')
@@ -175,7 +139,6 @@ class OrcamentoApp:
             relatorio += f"Medicamento: {med.nome}\n"
             relatorio += f"Quantidade: {med.quantidade}\n"
             relatorio += f"Preço Unitário: R$ {med.preco_cheio:.2f}\n"
-            #relatorio += f"Desconto: {med.desconto_percentual:.1f}%\n"
             relatorio += f"Preço com Desconto: R$ {med.preco_desconto:.2f}\n"
             relatorio += f"Valor Total: R$ {med.valor_total:.2f}\n"
             
