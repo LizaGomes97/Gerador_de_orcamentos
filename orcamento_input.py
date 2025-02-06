@@ -108,7 +108,7 @@ class OrcamentoApp:
             relatorio += f"Apresentação: {med.apresentacao}\n"
             relatorio += f"Quantidade: {med.quantidade}\n"
             relatorio += f"Preço Unitário: R$ {med.preco_cheio:.2f}\n"
-            relatorio += f"Desconto: {med.desconto_percentual:.2f}%\n"
+            #relatorio += f"Desconto: {med.desconto_percentual:.2f}%\n"
             relatorio += f"Preço com Desconto: R$ {med.preco_desconto:.2f}\n"
             relatorio += f"Valor Total: R$ {med.valor_total:.2f}\n"
             
