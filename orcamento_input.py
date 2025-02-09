@@ -1,6 +1,56 @@
 import re
 import tkinter as tk
-from tkinter import messagebox, scrolledtext
+from tkinter import ttk, messagebox, scrolledtext
+from tkinter.font import Font
+
+# Definindo cores do tema Drogasil
+CORES = {
+    'vermelho_principal': '#FF5C5C',  # Vermelho Drogasil
+    'cinza_claro': '#F5F5F5',        # Fundo claro
+    'cinza_medio': '#E0E0E0',        # Bordas
+    'texto_escuro': '#333333',       # Texto principal
+    'branco': '#F8F9FA',             # Texto em botões
+    'hover_vermelho': '#FF3355'      # Vermelho mais escuro para hover
+}
+
+class EstiloApp:
+    @staticmethod
+    def configurar_estilo():
+        style = ttk.Style()
+        
+        # Configurando tema base
+        style.theme_use('clam')
+        
+        # Configurando estilo dos botões
+        style.configure(
+            'Custom.TButton',
+            background=CORES['vermelho_principal'],
+            foreground=CORES['branco'],
+            borderwidth=0, #remove o contorno
+            focusthickness=0,
+            focuscolor=CORES['vermelho_principal'],
+            padding=(10, 10),
+            relief="raised",
+            font=('Helvetica', 10)
+            
+        )
+        
+        # Configurando diferentes estados do botão
+        style.map('Custom.TButton',
+            background=[
+                ('active', CORES['hover_vermelho']),
+                ('pressed', CORES['hover_vermelho'])
+            ],
+            foreground=[
+                ('active', CORES['branco']),
+                ('pressed', CORES['branco'])
+            ],
+            relief=[
+                ('pressed', 'sunken')
+            ]
+        )
+        
+        return style
 
 class Medicamento:
     def __init__(self, codigo, nome):
@@ -16,36 +66,104 @@ class Medicamento:
 class OrcamentoApp:
     def __init__(self, root):
         self.root = root
-        self.root.title("Processador de Orçamento de Medicamentos")
+        self.root.title("Processador de Orçamento de Medicamentos - Drogasil")
         self.root.geometry("800x600")
+        
+        # Configurando cores de fundo da janela principal
+        self.root.configure(bg=CORES['cinza_claro'])
+        
+        # Configurando fontes
+        self.titulo_font = Font(family="Helvetica", size=14, weight="bold")
+        self.texto_font = Font(family="Helvetica", size=10)
+        
+        # Configurando estilo
+        self.style = EstiloApp.configurar_estilo()
+        
+        # Criando widgets
+        self.criar_widgets()
 
-        self.button_frame = tk.Frame(root)
-        self.button_frame.pack(pady=5, fill=tk.X)
+    def criar_widgets(self):
+        # Frame principal
+        main_frame = tk.Frame(self.root, bg=CORES['cinza_claro'], padx=20, pady=10)
+        main_frame.pack(fill=tk.BOTH, expand=True)
+        
+        # Título
+        titulo_label = tk.Label(
+            main_frame,
+            text="Processador de Orçamento",
+            font=self.titulo_font,
+            bg=CORES['cinza_claro'],
+            fg=CORES['vermelho_principal']
+        )
+        titulo_label.pack(pady=(0, 20))
 
-        self.label_entrada = tk.Label(root, text="Cole aqui os dados do carrinho:")
+        # Label de entrada
+        self.label_entrada = tk.Label(
+            main_frame,
+            text="Cole aqui os dados do carrinho:",
+            font=self.texto_font,
+            bg=CORES['cinza_claro'],
+            fg=CORES['texto_escuro']
+        )
         self.label_entrada.pack(pady=5)
 
-        self.entrada_text = scrolledtext.ScrolledText(root, height=15, width=80)
+        # Campo de entrada
+        self.entrada_text = scrolledtext.ScrolledText(
+            main_frame,
+            height=15,
+            width=80,
+            font=self.texto_font,
+            bg=CORES['branco'],
+            relief="solid",
+            borderwidth=1
+        )
         self.entrada_text.pack(pady=10)
 
-        self.main_buttons_frame = tk.Frame(root)
-        self.main_buttons_frame.pack(pady=5)
+        # Frame para botões
+        self.main_buttons_frame = tk.Frame(main_frame, bg=CORES['cinza_claro'])
+        self.main_buttons_frame.pack(pady=10, fill =tk.X)
 
-        self.limpar_btn = tk.Button(self.main_buttons_frame, text="Limpar Tudo", command=self.limpar_tudo)
-        self.limpar_btn.pack(side=tk.LEFT, padx=5)
+         # Frame interno para os botões
+        buttons_container = tk.Frame(self.main_buttons_frame, bg=CORES['cinza_claro'])
+        buttons_container.pack(anchor='center')  # ancora o container no centro
 
-        self.processar_btn = tk.Button(self.main_buttons_frame, text="Processar Orçamento", command=self.processar_orcamento)
-        self.processar_btn.pack(side=tk.LEFT, padx=5)
+        # Criando botões
+        botoes = [
+            ("Limpar Tudo", self.limpar_tudo),
+            ("Processar Orçamento", self.processar_orcamento),
+            ("Copiar Orçamento", self.copiar_orcamento),
+            ("Gerar Código Interno", self.gerar_codigo_interno)
+        ]
 
-        self.copiar_btn = tk.Button(self.main_buttons_frame, text="Copiar Orçamento", command=self.copiar_orcamento)
-        self.copiar_btn.pack(side=tk.LEFT, padx=5)
+        for texto, comando in botoes:
+            btn = ttk.Button(
+                buttons_container,
+                text=texto,
+                command=comando,
+                style='Custom.TButton'
+            )
+            btn.pack(side=tk.LEFT, padx=5)
 
-        # Novo botão para gerar código interno
-        self.codigo_interno_btn = tk.Button(self.main_buttons_frame, text="Gerar Código Interno", command=self.gerar_codigo_interno)
-        self.codigo_interno_btn.pack(side=tk.LEFT, padx=5)
-
-        self.resultado_text = scrolledtext.ScrolledText(root, height=20, width=80, state='disabled')
+        # Campo de resultado
+        self.resultado_text = scrolledtext.ScrolledText(
+            main_frame,
+            height=20,
+            width=80,
+            font=self.texto_font,
+            bg=CORES['branco'],
+            relief="solid",
+            borderwidth=1,
+            state='disabled'
+        )
         self.resultado_text.pack(pady=10)
+
+    def mostrar_mensagem(self, tipo, titulo, mensagem):
+        if tipo == "erro":
+            messagebox.showerror(titulo, mensagem)
+        elif tipo == "aviso":
+            messagebox.showwarning(titulo, mensagem)
+        else:
+            messagebox.showinfo(titulo, mensagem)
 
     def limpar_tudo(self):
         self.entrada_text.delete('1.0', tk.END)
@@ -56,12 +174,12 @@ class OrcamentoApp:
     def copiar_orcamento(self):
         conteudo = self.resultado_text.get('1.0', tk.END).strip()
         if not conteudo:
-            messagebox.showwarning("Aviso", "Não há orçamento para copiar!")
+            self.mostrar_mensagem("aviso", "Aviso", "Não há orçamento para copiar!")
             return
 
         self.root.clipboard_clear()
         self.root.clipboard_append(conteudo)
-        messagebox.showinfo("Sucesso", "Orçamento copiado para a área de transferência!")
+        self.mostrar_mensagem("info", "Sucesso", "Orçamento copiado para a área de transferência!")
 
     def gerar_codigo_interno(self):
         self.resultado_text.config(state='normal')
@@ -70,19 +188,18 @@ class OrcamentoApp:
         entrada = self.entrada_text.get('1.0', tk.END).strip()
         
         if not entrada:
-            messagebox.showwarning("Aviso", "Por favor, cole os dados do carrinho!")
+            self.mostrar_mensagem("aviso", "Aviso", "Por favor, cole os dados do carrinho!")
             return
 
         try:
             medicamentos = self.processar_entrada(entrada)
             if medicamentos:
-                # Gera string com códigos separados por espaço
                 codigos = ' '.join(med.codigo for med in medicamentos)
                 self.resultado_text.insert(tk.END, codigos)
             else:
-                messagebox.showwarning("Aviso", "Nenhum medicamento encontrado nos dados!")
+                self.mostrar_mensagem("aviso", "Aviso", "Nenhum medicamento encontrado nos dados!")
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao processar dados: {str(e)}")
+            self.mostrar_mensagem("erro", "Erro", f"Erro ao processar dados: {str(e)}")
         
         self.resultado_text.config(state='disabled')
 
@@ -93,7 +210,7 @@ class OrcamentoApp:
         entrada = self.entrada_text.get('1.0', tk.END).strip()
         
         if not entrada:
-            messagebox.showwarning("Aviso", "Por favor, cole os dados do carrinho!")
+            self.mostrar_mensagem("aviso", "Aviso", "Por favor, cole os dados do carrinho!")
             return
 
         try:
@@ -102,9 +219,9 @@ class OrcamentoApp:
                 relatorio = self.gerar_orcamento(medicamentos)
                 self.resultado_text.insert(tk.END, relatorio)
             else:
-                messagebox.showwarning("Aviso", "Nenhum medicamento encontrado nos dados!")
+                self.mostrar_mensagem("aviso", "Aviso", "Nenhum medicamento encontrado nos dados!")
         except Exception as e:
-            messagebox.showerror("Erro", f"Erro ao processar dados: {str(e)}")
+            self.mostrar_mensagem("erro", "Erro", f"Erro ao processar dados: {str(e)}")
         
         self.resultado_text.config(state='disabled')
 
