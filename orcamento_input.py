@@ -1,8 +1,6 @@
 import re
 import tkinter as tk
 from tkinter import messagebox, scrolledtext
-import tempfile
-import os
 
 class Medicamento:
     def __init__(self, codigo, nome):
@@ -13,7 +11,7 @@ class Medicamento:
         self.desconto_percentual = 0.0
         self.preco_desconto = 0.0
         self.valor_total = 0.0
-        self.tem_desconto_especial = False
+        self.desconto_especial = ""
 
 class OrcamentoApp:
     def __init__(self, root):
@@ -42,6 +40,10 @@ class OrcamentoApp:
         self.copiar_btn = tk.Button(self.main_buttons_frame, text="Copiar Orçamento", command=self.copiar_orcamento)
         self.copiar_btn.pack(side=tk.LEFT, padx=5)
 
+        # Novo botão para gerar código interno
+        self.codigo_interno_btn = tk.Button(self.main_buttons_frame, text="Gerar Código Interno", command=self.gerar_codigo_interno)
+        self.codigo_interno_btn.pack(side=tk.LEFT, padx=5)
+
         self.resultado_text = scrolledtext.ScrolledText(root, height=20, width=80, state='disabled')
         self.resultado_text.pack(pady=10)
 
@@ -60,6 +62,29 @@ class OrcamentoApp:
         self.root.clipboard_clear()
         self.root.clipboard_append(conteudo)
         messagebox.showinfo("Sucesso", "Orçamento copiado para a área de transferência!")
+
+    def gerar_codigo_interno(self):
+        self.resultado_text.config(state='normal')
+        self.resultado_text.delete('1.0', tk.END)
+
+        entrada = self.entrada_text.get('1.0', tk.END).strip()
+        
+        if not entrada:
+            messagebox.showwarning("Aviso", "Por favor, cole os dados do carrinho!")
+            return
+
+        try:
+            medicamentos = self.processar_entrada(entrada)
+            if medicamentos:
+                # Gera string com códigos separados por espaço
+                codigos = ' '.join(med.codigo for med in medicamentos)
+                self.resultado_text.insert(tk.END, codigos)
+            else:
+                messagebox.showwarning("Aviso", "Nenhum medicamento encontrado nos dados!")
+        except Exception as e:
+            messagebox.showerror("Erro", f"Erro ao processar dados: {str(e)}")
+        
+        self.resultado_text.config(state='disabled')
 
     def processar_orcamento(self):
         self.resultado_text.config(state='normal')
@@ -110,8 +135,10 @@ class OrcamentoApp:
                     med.desconto_percentual = float(precos[1].replace(',', '.'))
                     
                     med.preco_desconto = float(linhas[3].replace(',', '.'))
-                    med.valor_total = float(linhas[4].split()[0].replace(',', '.'))
-                    med.tem_desconto_especial = len(linhas[4].split()) > 1 and 'desconto' in linhas[4].lower()
+                    valor_parts = linhas[4].split()
+                    med.valor_total = float(valor_parts[0].replace(',', '.'))
+                    if len(valor_parts) > 1:
+                        med.desconto_especial = ' '.join(valor_parts[1:])
                     
                     medicamentos.append(med)
                     
@@ -132,18 +159,21 @@ class OrcamentoApp:
             relatorio += f"Código: {med.codigo}\n"
             relatorio += f"Medicamento: {med.nome}\n"
             relatorio += f"Quantidade: {med.quantidade}\n"
+            
+            if med.desconto_especial:
+                relatorio += f"Desconto especial: {med.desconto_especial}\n"
+                
             relatorio += f"Preço Unitário: R$ {med.preco_cheio:.2f}\n"
-
+            
             if med.desconto_percentual > 0:
                 relatorio += f"Preço com Desconto: R$ {med.preco_desconto:.2f}\n"
                 
             relatorio += f"Valor Total: R$ {med.valor_total:.2f}\n"
+            relatorio += "-" * 60 + "\n"
             
             economia = (med.preco_cheio - med.preco_desconto) * med.quantidade
             economia_total += economia
             valor_total_orcamento += med.valor_total
-            
-            relatorio += "-" * 60 + "\n"
         
         relatorio += "\nRESUMO DO ORÇAMENTO\n"
         relatorio += f"Quantidade de Itens: {len(medicamentos)}\n"
