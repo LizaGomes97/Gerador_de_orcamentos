@@ -1,0 +1,63 @@
+('C:\\Users\\lizan\\OneDrive\\Área de '
+ 'Trabalho\\Faculdade\\orcamento\\build\\Processador Drogasil\\Processador '
+ 'Drogasil.pkg',
+ {'BINARY': True,
+  'DATA': True,
+  'EXECUTABLE': True,
+  'EXTENSION': True,
+  'PYMODULE': True,
+  'PYSOURCE': True,
+  'PYZ': False,
+  'SPLASH': True,
+  'SYMLINK': False},
+ [('pyi-contents-directory _internal', '', 'OPTION'),
+  ('PYZ-00.pyz',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador Drogasil\\PYZ-00.pyz',
+   'PYZ'),
+  ('struct',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador '
+   'Drogasil\\localpycs\\struct.pyc',
+   'PYMODULE'),
+  ('pyimod01_archive',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador '
+   'Drogasil\\localpycs\\pyimod01_archive.pyc',
+   'PYMODULE'),
+  ('pyimod02_importers',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador '
+   'Drogasil\\localpycs\\pyimod02_importers.pyc',
+   'PYMODULE'),
+  ('pyimod03_ctypes',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador '
+   'Drogasil\\localpycs\\pyimod03_ctypes.pyc',
+   'PYMODULE'),
+  ('pyimod04_pywin32',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\build\\Processador '
+   'Drogasil\\localpycs\\pyimod04_pywin32.pyc',
+   'PYMODULE'),
+  ('pyiboot01_bootstrap',
+   'C:\\Users\\lizan\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\loader\\pyiboot01_bootstrap.py',
+   'PYSOURCE'),
+  ('pyi_rth_inspect',
+   'C:\\Users\\lizan\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth_inspect.py',
+   'PYSOURCE'),
+  ('pyi_rth__tkinter',
+   'C:\\Users\\lizan\\AppData\\Local\\Programs\\Python\\Python313\\Lib\\site-packages\\PyInstaller\\hooks\\rthooks\\pyi_rth__tkinter.py',
+   'PYSOURCE'),
+  ('orcamento_input',
+   'C:\\Users\\lizan\\OneDrive\\Área de '
+   'Trabalho\\Faculdade\\orcamento\\orcamento_input.py',
+   'PYSOURCE')],
+ 'python313.dll',
+ True,
+ False,
+ False,
+ [],
+ None,
+ None,
+ None)
