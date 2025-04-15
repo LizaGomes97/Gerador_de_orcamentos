@@ -1,19 +1,15 @@
-const isProd = process.env.NODE_ENV === "production";
-const basePath = isProd ? "/api" : "";
-
-// server.js - versão corrigida com lógica original
-const cors = require("cors");
-app.use(cors());
+// Importações
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
+const cors = require("cors"); // Certifique-se de importar o módulo cors
 
 // Inicialização do app Express
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Configuração de middlewares
-app.use(bodyParser.json({ limit: "5mb" })); // Aumentando o limite para payloads grandes
+// Depois de inicializar o app, você pode usar os middlewares
+app.use(cors()); // Agora você pode usar o cors aqui
+app.use(bodyParser.json({ limit: "5mb" }));
 app.use(express.static(path.join(__dirname, "public")));
 
 // =============== MODELO DE MEDICAMENTO ===============
