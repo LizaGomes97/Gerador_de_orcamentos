@@ -243,7 +243,7 @@ class OrcamentoApp {
 
     try {
       // Enviando dados para o backend
-      const response = await fetch(`${API_BASE}/api/processar-orcamento`, {
+      const response = await fetch("/api/processar-orcamento", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
