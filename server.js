@@ -4,6 +4,10 @@ const path = require("path");
 const bodyParser = require("body-parser");
 const cors = require("cors"); // Certifique-se de importar o módulo cors
 
+// Variaveis
+const port = process.env.PORT || 3000;
+const basePath = "/api";
+
 // Inicialização do app Express
 const app = express();
 
