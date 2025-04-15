@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Processador de Orçamento de Medicamentos - Drogasil</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo-container">
+          <span class="logo"><i class="fas fa-pills"></i> Drogasil</span>
+          <span>Processador de Orçamentos</span>
+        </div>
+      </header>
+
+      <main>
+        <div class="card">
+          <div class="card-header">Dados do Carrinho</div>
+          <div class="card-body">
+            <label for="entrada">Cole os dados do carrinho abaixo:</label>
+            <div class="textarea-container">
+              <textarea id="entrada" rows="10" placeholder=" "></textarea>
+              <div class="textarea-placeholder">
+                <i class="fas fa-paste fa-2x"></i><br />
+                Cole aqui os dados do carrinho para processamento
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="buttons-section">
+          <button id="btn-processar" class="btn btn-primary">
+            <i class="fas fa-cogs"></i>&nbsp; Processar Orçamento
+          </button>
+          <button id="btn-codigo" class="btn btn-secondary">
+            <i class="fas fa-barcode"></i>&nbsp; Gerar Código Interno
+          </button>
+          <button id="btn-copiar" class="btn btn-outline">
+            <i class="fas fa-copy"></i>&nbsp; Copiar Resultado
+          </button>
+          <button id="btn-limpar" class="btn btn-outline">
+            <i class="fas fa-eraser"></i>&nbsp; Limpar Tudo
+          </button>
+        </div>
+
+        <div class="card">
+          <div class="card-header">Resultado do Processamento</div>
+          <div class="card-body">
+            <textarea id="resultado" rows="15" readonly></textarea>
+            <div id="empty-results" class="empty-results">
+              <i class="fas fa-file-invoice fa-2x"></i>
+              <p>Os resultados do processamento serão exibidos aqui</p>
+            </div>
+          </div>
+        </div>
+      </main>
+
+      <div class="status-bar">
+        <div>Sistema de Orçamentos v1.0</div>
+        <div>© 2025 Drogasil</div>
+      </div>
+    </div>
+
+    <script src="app.js"></script>
+  </body>
+</html>

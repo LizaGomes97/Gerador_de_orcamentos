@@ -1,0 +1,25 @@
+{
+  "name": "orcamento-medicamentos-web",
+  "version": "1.0.0",
+  "description": "Aplicação web para processamento de orçamentos de medicamentos",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "dev": "nodemon server.js"
+  },
+  "keywords": [
+    "medicamentos",
+    "orcamento",
+    "nodejs",
+    "express"
+  ],
+  "author": "Seu Nome",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.9"
+  }
+}
