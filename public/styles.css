@@ -295,3 +295,118 @@ textarea:placeholder-shown + .textarea-placeholder {
   padding: 2rem;
   color: var(--text-muted);
 }
+
+/* Estilos para impressão */
+@media print {
+  body {
+    background-color: white;
+    color: black;
+    font-size: 12pt;
+  }
+
+  .container {
+    width: 100%;
+    max-width: 100%;
+    padding: 0;
+    margin: 0;
+  }
+
+  .card,
+  .card-header,
+  .card-body,
+  textarea {
+    background-color: white;
+    color: black;
+    border: none;
+    box-shadow: none;
+  }
+
+  .buttons-section,
+  .status-bar,
+  #empty-results,
+  .card:first-of-type {
+    display: none;
+  }
+
+  textarea#resultado {
+    border: none;
+    height: auto;
+    overflow: visible;
+    resize: none;
+    white-space: pre-wrap;
+  }
+
+  header {
+    border-bottom: 1px solid #000;
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+  }
+
+  .logo,
+  header span {
+    color: black;
+  }
+
+  /* Classe específica para o template de impressão */
+  .print-content {
+    font-family: "Courier New", monospace;
+    white-space: pre-wrap;
+    line-height: 1.5;
+    padding: 1cm;
+  }
+
+  .print-header {
+    text-align: center;
+    margin-bottom: 1cm;
+  }
+
+  .print-header h1 {
+    font-size: 18pt;
+    margin-bottom: 0.5cm;
+  }
+
+  .print-header p {
+    font-size: 10pt;
+  }
+
+  .print-footer {
+    margin-top: 1cm;
+    font-size: 8pt;
+    text-align: center;
+    border-top: 1px solid #ccc;
+    padding-top: 0.5cm;
+  }
+}
+
+/* Versão para impressão */
+#print-template {
+  display: none;
+}
+
+.print-content {
+  font-family: "Courier New", monospace;
+  white-space: pre-wrap;
+  line-height: 1.5;
+}
+
+.print-header {
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.print-header h1 {
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.print-header p {
+  font-size: 14px;
+}
+
+.print-footer {
+  margin-top: 30px;
+  font-size: 12px;
+  text-align: center;
+  border-top: 1px solid #ccc;
+  padding-top: 10px;
+}

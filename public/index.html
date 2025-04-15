@@ -41,6 +41,9 @@
           <button id="btn-codigo" class="btn btn-secondary">
             <i class="fas fa-barcode"></i>&nbsp; Gerar Código Interno
           </button>
+          <button id="btn-imprimir" class="btn btn-secondary">
+            <i class="fas fa-print"></i>&nbsp; Imprimir Orçamento
+          </button>
           <button id="btn-copiar" class="btn btn-outline">
             <i class="fas fa-copy"></i>&nbsp; Copiar Resultado
           </button>
@@ -65,6 +68,11 @@
         <div>Sistema de Orçamentos v1.0</div>
         <div>© 2025 Drogasil</div>
       </div>
+    </div>
+
+    <!-- Template para impressão (invisível na interface) -->
+    <div id="print-template" style="display: none">
+      <!-- O conteúdo será preenchido dinamicamente via JavaScript -->
     </div>
 
     <script src="app.js"></script>

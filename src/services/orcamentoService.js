@@ -12,55 +12,92 @@ class OrcamentoService {
    * @returns {Array<Medicamento>} Lista de medicamentos extraídos
    */
   processarEntrada(entrada) {
-    // Dividindo o texto em blocos (separados por linhas em branco)
-    const blocos = entrada.split(/\n\s*\n/);
-    const medicamentos = [];
+    console.log("Iniciando processamento da entrada");
 
-    for (const bloco of blocos) {
-      if (!bloco.trim()) continue;
-
-      // Dividindo cada bloco em linhas
-      const linhas = bloco
+    try {
+      // Dividir a entrada em linhas
+      const linhas = entrada
         .split("\n")
         .map((linha) => linha.trim())
         .filter((linha) => linha);
+      console.log(`Total de linhas na entrada: ${linhas.length}`);
 
-      if (linhas.length >= 5) {
+      const medicamentos = [];
+      let i = 0;
+
+      // Percorrer todas as linhas
+      while (i < linhas.length) {
         try {
-          // Processando a primeira linha para obter código e nome
-          const primeiraLinha = linhas[0].split(/\s+(.+)/);
-          if (primeiraLinha.length < 2) continue;
+          // Verificar se a linha atual contém um código de medicamento (começa com número)
+          const codigoMatch = linhas[i].match(/^(\d+)\s+(.*?)$/);
 
-          const codigo = primeiraLinha[0].trim();
-          const nome = primeiraLinha[1].trim();
+          if (codigoMatch) {
+            console.log(
+              `Encontrado possível medicamento na linha ${i + 1}: ${linhas[i]}`
+            );
 
-          const med = new Medicamento(codigo, nome);
-          med.quantidade = parseInt(linhas[1]);
+            const codigo = codigoMatch[1];
+            const nome = codigoMatch[2];
 
-          // Processando preços
-          const precos = linhas[2].split(/\s+/);
-          med.preco_cheio = parseFloat(precos[0].replace(",", "."));
-          med.desconto_percentual = parseFloat(precos[1].replace(",", "."));
+            // Verificar se temos linhas suficientes para processar este medicamento
+            if (i + 4 < linhas.length) {
+              const med = new Medicamento(codigo, nome);
 
-          med.preco_desconto = parseFloat(linhas[3].replace(",", "."));
+              // Linha seguinte deve ser a quantidade
+              i++;
+              med.quantidade = parseInt(linhas[i]);
 
-          // Processando valor total e possível desconto especial
-          const valorParts = linhas[4].split(/\s+/);
-          med.valor_total = parseFloat(valorParts[0].replace(",", "."));
+              // Próxima linha deve conter o preço e desconto
+              i++;
+              const precosTexto = linhas[i];
+              const precos = precosTexto
+                .split(/\s+/)
+                .filter((p) => p.length > 0);
 
-          if (valorParts.length > 1) {
-            med.desconto_especial = valorParts.slice(1).join(" ");
+              if (precos.length >= 2) {
+                med.preco_cheio = parseFloat(precos[0].replace(",", "."));
+                med.desconto_percentual = parseFloat(
+                  precos[1].replace(",", ".")
+                );
+              }
+
+              // Próxima linha deve ser o preço com desconto
+              i++;
+              med.preco_desconto = parseFloat(linhas[i].replace(",", "."));
+
+              // Próxima linha deve ser o valor total e possível desconto especial
+              i++;
+              const valorLinha = linhas[i];
+              const valorPartes = valorLinha
+                .split(/\s+/)
+                .filter((p) => p.length > 0);
+
+              med.valor_total = parseFloat(valorPartes[0].replace(",", "."));
+
+              // Se houver mais partes após o valor, é desconto especial
+              if (valorPartes.length > 1) {
+                med.desconto_especial = valorPartes.slice(1).join(" ");
+              }
+
+              // Adicionar o medicamento processado à lista
+              medicamentos.push(med);
+              console.log(`Medicamento processado: ${codigo} - ${nome}`);
+            }
           }
-
-          medicamentos.push(med);
         } catch (e) {
-          console.error("Erro ao processar bloco:", e);
-          continue;
+          console.error(`Erro ao processar linha ${i + 1}:`, e);
         }
-      }
-    }
 
-    return medicamentos;
+        // Avançar para a próxima linha
+        i++;
+      }
+
+      console.log(`Total de medicamentos processados: ${medicamentos.length}`);
+      return medicamentos;
+    } catch (e) {
+      console.error("Erro geral no processamento:", e);
+      return [];
+    }
   }
 
   /**
@@ -87,6 +124,7 @@ class OrcamentoService {
       relatorio += `Preço Unitário: R$ ${med.preco_cheio.toFixed(2)}\n`;
 
       if (med.desconto_percentual > 0) {
+        relatorio += `Desconto: ${med.desconto_percentual.toFixed(1)}%\n`;
         relatorio += `Preço com Desconto: R$ ${med.preco_desconto.toFixed(
           2
         )}\n`;
@@ -95,7 +133,7 @@ class OrcamentoService {
       relatorio += `Valor Total: R$ ${med.valor_total.toFixed(2)}\n`;
       relatorio += "-".repeat(60) + "\n";
 
-      const economia = med.calcularEconomia();
+      const economia = (med.preco_cheio - med.preco_desconto) * med.quantidade;
       economia_total += economia;
       valor_total_orcamento += med.valor_total;
     }

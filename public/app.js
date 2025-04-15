@@ -8,7 +8,9 @@ class OrcamentoApp {
     this.btnProcessar = document.getElementById("btn-processar");
     this.btnCopiar = document.getElementById("btn-copiar");
     this.btnCodigo = document.getElementById("btn-codigo");
+    this.btnImprimir = document.getElementById("btn-imprimir");
     this.emptyResults = document.getElementById("empty-results");
+    this.printTemplate = document.getElementById("print-template");
 
     // Configuração de event listeners
     this.configurarEventos();
@@ -22,6 +24,7 @@ class OrcamentoApp {
     );
     this.btnCopiar.addEventListener("click", () => this.copiarOrcamento());
     this.btnCodigo.addEventListener("click", () => this.gerarCodigoInterno());
+    this.btnImprimir.addEventListener("click", () => this.imprimirOrcamento());
 
     // Atualizar estado quando resultado mudar
     this.resultadoText.addEventListener("input", () =>
@@ -33,9 +36,13 @@ class OrcamentoApp {
     if (this.resultadoText.value.trim() === "") {
       this.emptyResults.style.display = "block";
       this.resultadoText.style.display = "none";
+      this.btnImprimir.disabled = true;
+      this.btnImprimir.classList.add("disabled");
     } else {
       this.emptyResults.style.display = "none";
       this.resultadoText.style.display = "block";
+      this.btnImprimir.disabled = false;
+      this.btnImprimir.classList.remove("disabled");
     }
   }
 
@@ -89,6 +96,68 @@ class OrcamentoApp {
       .catch((err) => {
         this.mostrarMensagem("error", "Erro", "Falha ao copiar: " + err);
       });
+  }
+
+  imprimirOrcamento() {
+    const conteudo = this.resultadoText.value.trim();
+
+    if (!conteudo) {
+      this.mostrarMensagem(
+        "warning",
+        "Aviso",
+        "Não há orçamento para imprimir!"
+      );
+      return;
+    }
+
+    // Preparando o conteúdo formatado para impressão
+    const dataAtual = new Date().toLocaleDateString("pt-BR");
+    const horaAtual = new Date().toLocaleTimeString("pt-BR");
+
+    // Criar o template de impressão
+    this.printTemplate.innerHTML = `
+          <div class="print-content">
+              <div class="print-header">
+                  <h1>DROGASIL - ORÇAMENTO DE MEDICAMENTOS</h1>
+                  <p>Data: ${dataAtual} - Hora: ${horaAtual}</p>
+              </div>
+              
+              <div class="print-body">
+                  ${this.formatarParaImpressao(conteudo)}
+              </div>
+              
+              <div class="print-footer">
+                  <p>Drogasil - Processador de Orçamentos v1.0</p>
+                  <p>Este documento é apenas um orçamento e não representa um comprovante de compra.</p>
+              </div>
+          </div>
+      `;
+
+    // Salvar o conteúdo original da página
+    const originalContent = document.body.innerHTML;
+
+    // Substituir pelo template de impressão
+    document.body.innerHTML = this.printTemplate.innerHTML;
+
+    // Disparar a impressão
+    window.print();
+
+    // Restaurar o conteúdo original
+    document.body.innerHTML = originalContent;
+
+    // Reinicializar as referências e event listeners
+    this.constructor();
+  }
+
+  formatarParaImpressao(texto) {
+    // Adiciona formatação HTML ao texto do orçamento
+    // Substitui as linhas de separação por elementos HTML
+    let formatado = texto
+      .replace(/^(.+)$/gm, "<div>$1</div>")
+      .replace(/={60}/g, '<hr style="border-top: 2px solid #000;">')
+      .replace(/-{60}/g, '<hr style="border-top: 1px dashed #999;">');
+
+    return formatado;
   }
 
   async gerarCodigoInterno() {
