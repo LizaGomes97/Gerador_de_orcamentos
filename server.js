@@ -1,4 +1,9 @@
+const isProd = process.env.NODE_ENV === "production";
+const basePath = isProd ? "/api" : "";
+
 // server.js - versão corrigida com lógica original
+const cors = require("cors");
+app.use(cors());
 const express = require("express");
 const path = require("path");
 const bodyParser = require("body-parser");
@@ -188,7 +193,7 @@ const orcamentoService = new OrcamentoService();
 
 // =============== ROTAS DA API ===============
 // Rota para processar orçamento
-app.post("/api/processar-orcamento", (req, res) => {
+app.post(`${basePath}/processar-orcamento`, (req, res) => {
   try {
     const { entrada } = req.body;
     console.log("Recebida requisição para processar orçamento");
@@ -231,7 +236,7 @@ app.post("/api/processar-orcamento", (req, res) => {
 });
 
 // Rota para gerar código interno
-app.post("/api/gerar-codigo", (req, res) => {
+app.post(`${basePath}/gerar-codigo`, (req, res) => {
   try {
     const { entrada } = req.body;
     console.log("Recebida requisição para gerar código interno");
@@ -276,6 +281,9 @@ app.post("/api/gerar-codigo", (req, res) => {
 // Rota para servir a página principal
 app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "public", "index.html"));
+});
+app.get("/api/teste", (req, res) => {
+  res.json({ status: "ok", message: "API funcionando!" });
 });
 
 // Tratamento de erros 404
